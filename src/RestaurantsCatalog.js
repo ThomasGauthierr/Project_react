@@ -7,7 +7,7 @@ class RestaurantsCatalog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            restaurants: ['McDonalds', 'Kfc']
+            restaurants: []
         }
     }
 
@@ -26,10 +26,10 @@ class RestaurantsCatalog extends React.Component {
             .then(response => {
                 return response.json();
             })
-            .then(data => {
+            .then(results => {
                 let restaurants = [];
-                data.data.forEach((e1) => {
-                    restaurants.push(e1);
+                results.data.forEach((el) => {
+                    restaurants.push(el);
                 }); 
                 
                 this.setState({
@@ -43,15 +43,37 @@ class RestaurantsCatalog extends React.Component {
             });
     }
 
+    removeRestaurant(id, index) {
+        console.log("delete : " + index);
+        let url = "localhost:8080/api/restaurants/" + id;
+ 
+        fetch(url, {
+            method: "DELETE",
+        })
+        .then(response =>
+                response.json().then(json  => {
+            this.restaurants.splice(index,1)
+            this.filteredrestaurants.splice(index,1)
+            this.message = 'Ce restaurant a été supprimé'
+            this.showMessage = true
+            setTimeout(()=>{
+                this.showMessage = false
+            },3000)
+        })
+        .catch(function (err) {
+            console.log(err);
+        }));
+    }
+
     render() {
-        let list = this.state.restaurants.map(
-            (el) => {
-                return <Restaurant name={el.name} cuisine={el.name}/>
+        let list = this.state.restaurants.map((el,index) => {
+                return <Restaurant name={el.name} cuisine={el.cuisine} 
+                index={index} delete={this.removeRestaurant.bind(el._id, index)}/>
             }
         );
         
         return (
-            <div className="App">
+            <div className="Restaurant">
                 <h3>Liste des restaurants: </h3>
                 <input
                     type="text"

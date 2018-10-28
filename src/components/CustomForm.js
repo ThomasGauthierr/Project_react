@@ -53,7 +53,7 @@ class CustomForm extends React.Component {
         }
         this.props.hide;
         event.preventDefault();
-        window.location.reload();
+        this.props.reload;
     }
 
     render() {

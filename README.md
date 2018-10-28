@@ -1,3 +1,20 @@
+# Fonctionnalités mises en place
+* Ajout d'un nouveau restaurant
+* Mise à jour d'un restaurant
+* Affichage des résultats en fonction de la valeur choisie dans le dropdown
+
+# Composants
+* Le composant principal est "RestaurantsCatalog"
+* Les formulaires de création et d'édition sont générés avec le composant "CustomForm"
+* Chaque ligne du tableau de restaurants est créée grâce au composant "Restaurant"
+
+# Bugs 
+- Je dois rafraichir avec un windown.location.reload la page après avoir édité un restaurant car lorsque je passe la fonction getDataFromServer au composant CustomForm, il appelle cette fonction en boucle.
+- Lorsque l'on change le nombre de restaurants à afficher avec le dropdown, le changement n'est pris en compte qu'après une action de navigation (changement de page ou nouveau changement du nombre de restaurants à afficher)
+
+__
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>

@@ -55,7 +55,7 @@ class RestaurantsCatalog extends React.Component {
     }
 
     getDataFromServer() {
-        //console.log('--- GETTING DATA ---');
+        console.log('--- GETTING DATA ---');
         fetch('http://localhost:8080/api/restaurants?page='+this.state.currentPage+'&pagesize='+this.state.displayNumber)
             .then(response => {
                 return response.json();
@@ -90,7 +90,7 @@ class RestaurantsCatalog extends React.Component {
             //console.log("Before : " + this.state.restaurants.length)
             this.state.restaurants.splice(index,1)
             //console.log("After : " + this.state.restaurants.length)
-            //window.location.reload();
+            this.getDataFromServer();
         })
         .catch(function (err) {
             console.log(err);
@@ -126,7 +126,7 @@ class RestaurantsCatalog extends React.Component {
         })
     }
 
-    hideEditFormRestaurant(id, name, cuisine) {
+    hideEditFormRestaurant() {
         document.querySelector('#form2').hidden = true;
 
         this.setState({
@@ -150,9 +150,16 @@ class RestaurantsCatalog extends React.Component {
 
     navigate(element) {
         let cnumber = parseInt(element.target.innerHTML)-1;
-        this.currentPage = cnumber;
+
+        this.setState({
+            currentPage: cnumber
+        })
+
+        this.countRestaurants();
+
         let url = '/api/restaurants?page='+this.state.currentPage+'&pagesize='+this.state.displayNumber
         this.getDataFromServer(url)
+
         if(element.target.id === 'thirdButton' || element.target.id === 'firstButton'){
             if(this.state.currentPage === 0 || this.state.currentPage === Math.ceil(this.state.elementCount/this.state.displayNumber)){
                 console.log('exit')
@@ -166,8 +173,13 @@ class RestaurantsCatalog extends React.Component {
     }
 
     handleChangeDisplayNumber(event) {
+        this.setState({
+            displayNumber: event.target.value
+        });
+
         //console.log(event.target.value)
-        this.setState({ displayNumber: event.target.value });
+        let url = '/api/restaurants?page='+this.state.currentPage+'&pagesize='+event.target.value
+        this.getDataFromServer(url)
         //console.log(this.state.displayNumber);        
     }
 
@@ -211,10 +223,10 @@ class RestaurantsCatalog extends React.Component {
                 </div>
 
                 <div id="form1" hidden="true">
-                { this.state.showAdd ? <CustomForm type="Create" hide={this.hideForms.bind()}/> : null }                
+                { this.state.showAdd ? <CustomForm type="Create" hide={this.hideCreateFormRestaurant.bind(this)} reload={this.getDataFromServer.bind(this)}/> : null }                
                 </div>
                 <div id="form2" hidden="true">
-                { this.state.showEdit ? <CustomForm type="Edit"  hide={this.hideForms.bind()} name={this.state.editName} cuisine={this.state.editCuisine} editID={this.state.editID} /> : null }
+                { this.state.showEdit ? <CustomForm type="Edit"  hide={this.hideEditFormRestaurant.bind(this)} reload={this.getDataFromServer.bind(this)} name={this.state.editName} cuisine={this.state.editCuisine} editID={this.state.editID} /> : null }
                 </div><br/>
 
                 <table className="table table-bordered">

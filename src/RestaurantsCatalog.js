@@ -208,7 +208,7 @@ class RestaurantsCatalog extends React.Component {
         
         return (
             <div className="Restaurant">
-                <h3>Liste des restaurants: </h3>
+                <h2>Liste des restaurants</h2>
                 <button type="button" class="btn btn-dark mb-3" id="createButton" onClick={this.showCreateFormRestaurant.bind(this)}>+</button><br/>
 
                 <div class="input-group mb-3">

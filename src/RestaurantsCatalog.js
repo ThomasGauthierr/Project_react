@@ -21,6 +21,8 @@ class RestaurantsCatalog extends React.Component {
         }
 
         this.handleChangeDisplayNumber = this.handleChangeDisplayNumber.bind(this);
+        this.handleChangeEditID = this.handleChangeEditID.bind(this);
+        this.handleChangeEditCuisine = this.handleChangeEditCuisine.bind(this);
     }
 
     componentWillMount() {
@@ -169,6 +171,18 @@ class RestaurantsCatalog extends React.Component {
         //console.log(this.state.displayNumber);        
     }
 
+    handleChangeEditID(event) {
+        this.setState({
+            editID: event.target.value
+        })
+    }
+
+    handleChangeEditCuisine(event) {
+        this.setState({
+            editCuisine: event.target.value
+        })
+    }
+
     render() {
         let list = this.state.restaurants.map((el,index) => {
                 return <Restaurant
@@ -197,9 +211,10 @@ class RestaurantsCatalog extends React.Component {
                 </div>
 
                 <div id="form1" hidden="true">
-                    <CustomForm type="Create" hide={this.hideForms.bind()}/>                </div>
+                { this.state.showAdd ? <CustomForm type="Create" hide={this.hideForms.bind()}/> : null }                
+                </div>
                 <div id="form2" hidden="true">
-                    <CustomForm type="Edit"  hide={this.hideForms.bind()} name={this.state.editName} cuisine={this.state.editCuisine} editID={this.state.editID} />
+                { this.state.showEdit ? <CustomForm type="Edit"  hide={this.hideForms.bind()} name={this.state.editName} cuisine={this.state.editCuisine} editID={this.state.editID} /> : null }
                 </div><br/>
 
                 <table className="table table-bordered">

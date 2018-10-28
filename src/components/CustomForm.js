@@ -15,6 +15,8 @@ class CustomForm extends React.Component {
         this.handleChangeCuisine = this.handleChangeCuisine.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
+        console.log(this.state.cuisine)
+
     }
 
     handleChangeName(event) {

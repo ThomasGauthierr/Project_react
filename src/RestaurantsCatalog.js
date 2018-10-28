@@ -19,6 +19,8 @@ class RestaurantsCatalog extends React.Component {
             elementCount: null,
             cRestaurants: null
         }
+
+        this.handleChangeDisplayNumber = this.handleChangeDisplayNumber.bind(this);
     }
 
     componentWillMount() {
@@ -36,9 +38,12 @@ class RestaurantsCatalog extends React.Component {
         fetch(url)
             .then(response => {
                 response.json().then(res=>{
-                    this.state.elementCount = res.data;
+                    let nb = Math.ceil(res.data / this.state.displayNumber);
+                    this.setState({
+                        elementCount: res.data,
+                        cRestaurants: nb
+                    });
                     //console.log("nb : " + this.state.elementCount)
-                    this.state.cRestaurants = Math.ceil(this.state.elementCount/this.state.displayNumber);
                     //console.log("nb pages : " + this.state.cRestaurants)
                 })
             })
@@ -48,8 +53,8 @@ class RestaurantsCatalog extends React.Component {
     }
 
     getDataFromServer() {
-        console.log('--- GETTING DATA ---');
-        fetch('http://localhost:8080/api/restaurants')
+        //console.log('--- GETTING DATA ---');
+        fetch('http://localhost:8080/api/restaurants?page='+this.state.currentPage+'&pagesize='+this.state.displayNumber)
             .then(response => {
                 return response.json();
             })
@@ -90,7 +95,20 @@ class RestaurantsCatalog extends React.Component {
         });
     }
 
+    showCreateFormRestaurant() {
+        this.hideEditFormRestaurant();
+
+        document.querySelector('#form1').hidden = false;
+        this.setState({
+            showAdd: true
+        })
+    }
+
     showEditFormRestaurant(id, name, cuisine) {
+        this.hideCreateFormRestaurant();
+
+        document.querySelector('#form2').hidden = false;
+
         this.setState({
             showEdit: true,
             editID: id,
@@ -99,19 +117,33 @@ class RestaurantsCatalog extends React.Component {
         })
     }
 
-    showCreateFormRestaurant() {
-        this.state.showAdd = true;
+    hideCreateFormRestaurant() {
+        document.querySelector('#form1').hidden = true;
+        this.setState({
+            showAdd: false
+        })
     }
 
+    hideEditFormRestaurant(id, name, cuisine) {
+        document.querySelector('#form2').hidden = true;
+
+        this.setState({
+            showEdit: false,
+            editID: null,
+            editName: null,
+            editCuisine: null
+        })
+    }
+    
+
     hideForms() {
+        document.querySelector('#form1').hidden = false;
+        document.querySelector('#form2').hidden = false;
+
         this.setState({
             showAdd: false,
             showEdit: false
         })
-    }
-
-    showForm() {
-
     }
 
     navigate(element) {
@@ -119,8 +151,8 @@ class RestaurantsCatalog extends React.Component {
         this.currentPage = cnumber;
         let url = '/api/restaurants?page='+this.state.currentPage+'&pagesize='+this.state.displayNumber
         this.getDataFromServer(url)
-        if(element.target.id == 'thirdButton' || element.target.id == 'firstButton'){
-            if(this.state.currentPage == 0 || this.state.currentPage == Math.ceil(this.state.elementCount/this.state.displayNumber)){
+        if(element.target.id === 'thirdButton' || element.target.id === 'firstButton'){
+            if(this.state.currentPage === 0 || this.state.currentPage === Math.ceil(this.state.elementCount/this.state.displayNumber)){
                 console.log('exit')
                 return;
             }
@@ -129,6 +161,12 @@ class RestaurantsCatalog extends React.Component {
             document.querySelector('#secondButton').innerHTML = cnumber+1;
             document.querySelector('#thirdButton').innerHTML = cnumber + 2;
         }
+    }
+
+    handleChangeDisplayNumber(event) {
+        //console.log(event.target.value)
+        this.setState({ displayNumber: event.target.value });
+        //console.log(this.state.displayNumber);        
     }
 
     render() {
@@ -151,21 +189,17 @@ class RestaurantsCatalog extends React.Component {
                     <div class="input-group-prepend">
                         <label class="input-group-text" for="elementPageDropDown">Elements par page</label>
                     </div>
-                    <select value={this.state.displayNumber} class="custom-select" id="elementPageDropDown">
+                    <select value={this.state.displayNumber} class="custom-select" id="elementPageDropDown" onChange={this.handleChangeDisplayNumber}>
                         <option value="5">5</option>
                         <option value="10">10</option>
                         <option value="15">15</option>
                     </select>
                 </div>
 
-                <input
-                    type="text"
-                    placeholder = "Chercher par nom"
-                    ref={(input) => {this.input = input}}
-                /><br/><br/>
-                <div id="form1">
-                    { this.state.showAdd ? <CustomForm type="Create" hide={this.hideForms.bind()}/> : null }
-                    { this.state.showEdit ? <CustomForm type="Edit"  hide={this.hideForms.bind()} name={this.state.editName} cuisine={this.state.editCuisine} editID={this.state.editID} /> : null }
+                <div id="form1" hidden="true">
+                    <CustomForm type="Create" hide={this.hideForms.bind()}/>                </div>
+                <div id="form2" hidden="true">
+                    <CustomForm type="Edit"  hide={this.hideForms.bind()} name={this.state.editName} cuisine={this.state.editCuisine} editID={this.state.editID} />
                 </div><br/>
 
                 <table className="table table-bordered">

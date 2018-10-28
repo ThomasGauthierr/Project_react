@@ -15,8 +15,6 @@ class CustomForm extends React.Component {
         this.handleChangeCuisine = this.handleChangeCuisine.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
-        console.log(this.state.cuisine)
-
     }
 
     handleChangeName(event) {
@@ -28,7 +26,7 @@ class CustomForm extends React.Component {
     }
 
     handleSubmit(event) {
-        let url = "http://localhost:8080/api/restaurants";
+        let url = "http://localhost:8080/api/restaurants/" + this.state.editID;
         console.log
         let data = new FormData();
         data.append("id", this.state.editID);
@@ -37,7 +35,6 @@ class CustomForm extends React.Component {
 
 
         if (this.state.type === "Edit") {
-            alert("Restaurant edited : " + this.state.name);
             if (!this.state.name || !this.state.cuisine) {
                 return;
             }
@@ -56,6 +53,7 @@ class CustomForm extends React.Component {
         }
         this.props.hide;
         event.preventDefault();
+        window.location.reload();
     }
 
     render() {

@@ -15,6 +15,8 @@ class CustomForm extends React.Component {
         this.handleChangeCuisine = this.handleChangeCuisine.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
+        this.props = props;
+
     }
 
     handleChangeName(event) {
@@ -51,9 +53,9 @@ class CustomForm extends React.Component {
             });
             alert("Restaurant added : " + this.state.name);
         }
-        this.props.hide;
+        this.props.hide();
         event.preventDefault();
-        this.props.reload;
+        this.props.reload();
     }
 
     render() {

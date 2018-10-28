@@ -2,6 +2,7 @@
 * Ajout d'un nouveau restaurant
 * Mise à jour d'un restaurant
 * Affichage des résultats en fonction de la valeur choisie dans le dropdown
+* Navigation
 
 # Composants
 * Le composant principal est "RestaurantsCatalog"
@@ -9,8 +10,7 @@
 * Chaque ligne du tableau de restaurants est créée grâce au composant "Restaurant"
 
 # Bugs 
-- Je dois rafraichir avec un windown.location.reload la page après avoir édité un restaurant car lorsque je passe la fonction getDataFromServer au composant CustomForm, il appelle cette fonction en boucle.
-- Lorsque l'on change le nombre de restaurants à afficher avec le dropdown, le changement n'est pris en compte qu'après une action de navigation (changement de page ou nouveau changement du nombre de restaurants à afficher)
+- Lorsque l'on change le nombre de restaurants à afficher avec le dropdown, le changement n'est pris en compte qu'après une action de navigation (changement de page ou nouveau changement du nombre de restaurants à afficher). Même problème avec la modification d'un restaurant.
 
 __
 

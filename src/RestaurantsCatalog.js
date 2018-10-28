@@ -13,17 +13,38 @@ class RestaurantsCatalog extends React.Component {
             showEdit: false,
             editID: "",
             editName: "",
-            editCuisine: ""
+            editCuisine: "",
+            displayNumber: 10,
+            currentPage: 0,
+            elementCount: null,
+            cRestaurants: null
         }
     }
 
     componentWillMount() {
         console.log('Component will mount');
+        this.countRestaurants();
         this.getDataFromServer();
     }
 
     componentWillUnmount() {
 
+    }
+
+    countRestaurants(){
+        let url = "http://localhost:8080/api/restaurants/count";
+        fetch(url)
+            .then(response => {
+                response.json().then(res=>{
+                    this.state.elementCount = res.data;
+                    //console.log("nb : " + this.state.elementCount)
+                    this.state.cRestaurants = Math.ceil(this.state.elementCount/this.state.displayNumber);
+                    //console.log("nb pages : " + this.state.cRestaurants)
+                })
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
     }
 
     getDataFromServer() {
@@ -93,8 +114,21 @@ class RestaurantsCatalog extends React.Component {
 
     }
 
-    search() {
-
+    navigate(element) {
+        let cnumber = parseInt(element.target.innerHTML)-1;
+        this.currentPage = cnumber;
+        let url = '/api/restaurants?page='+this.state.currentPage+'&pagesize='+this.state.displayNumber
+        this.getDataFromServer(url)
+        if(element.target.id == 'thirdButton' || element.target.id == 'firstButton'){
+            if(this.state.currentPage == 0 || this.state.currentPage == Math.ceil(this.state.elementCount/this.state.displayNumber)){
+                console.log('exit')
+                return;
+            }
+            console.log('changing')
+            document.querySelector('#firstButton').innerHTML = cnumber;
+            document.querySelector('#secondButton').innerHTML = cnumber+1;
+            document.querySelector('#thirdButton').innerHTML = cnumber + 2;
+        }
     }
 
     render() {
@@ -112,6 +146,18 @@ class RestaurantsCatalog extends React.Component {
             <div className="Restaurant">
                 <h3>Liste des restaurants: </h3>
                 <button type="button" class="btn btn-dark mb-3" id="createButton" onClick={this.showCreateFormRestaurant.bind(this)}>+</button><br/>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="elementPageDropDown">Elements par page</label>
+                    </div>
+                    <select value={this.state.displayNumber} class="custom-select" id="elementPageDropDown">
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="15">15</option>
+                    </select>
+                </div>
+
                 <input
                     type="text"
                     placeholder = "Chercher par nom"
@@ -134,7 +180,17 @@ class RestaurantsCatalog extends React.Component {
                         {list}
                     </tbody>
                 </table>
+
+                <div class="navigation">
+                    <button type="button" class="btn btn-dark" id="firstButton" onClick={(e) => this.navigate(e)}>1</button>
+                    <button type="button" class="btn btn-dark" id="secondButton" onClick={(e) => this.navigate(e)}>2</button>
+                    <button type="button" class="btn btn-dark" id="thirdButton" onClick={(e) => this.navigate(e)}>3</button>
+                    ............
+                    <button type="button" class="btn btn-dark" id="lastPageButton" onClick={(e) => this.navigate(e)} > {this.state.cRestaurants} </button>
+                </div>
+
             </div>
+
         );
     }
 } 

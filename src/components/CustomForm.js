@@ -7,7 +7,8 @@ class CustomForm extends React.Component {
         this.state = {
             type: props.type || 'Create',
             name: props.name || '',
-            cuisine: props.cuisine || ''
+            cuisine: props.cuisine || '',
+            editID: props.editID || ''
         };
 
         this.handleChangeName = this.handleChangeName.bind(this);
@@ -28,13 +29,22 @@ class CustomForm extends React.Component {
         let url = "http://localhost:8080/api/restaurants";
         console.log
         let data = new FormData();
+        data.append("id", this.state.editID);
         data.append("nom", this.state.name);
         data.append("cuisine", this.state.cuisine);
 
 
-        if (this.state.type == "Update") {
-            alert("Restaurant updated : " + this.state.name);
-            //ToDo : update restaurant
+        if (this.state.type === "Edit") {
+            alert("Restaurant edited : " + this.state.name);
+            if (!this.state.name || !this.state.cuisine) {
+                return;
+            }
+
+            fetch(url, {
+                method: 'PUT',
+                body: data
+            })
+            alert("Restaurant edited : " + this.state.name);
         } else {
             fetch(url, {
                 method: 'POST',
@@ -42,9 +52,7 @@ class CustomForm extends React.Component {
             });
             alert("Restaurant added : " + this.state.name);
         }
-        this.state.name = "";
-        this.state.cuisine = "";
-        
+        this.props.hide;
         event.preventDefault();
     }
 

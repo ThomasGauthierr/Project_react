@@ -10,9 +10,10 @@ class RestaurantsCatalog extends React.Component {
         this.state = {
             restaurants: [],
             showAdd: false,
-            showUpdate: false,
-            updateName: "titi",
-            updateCuisine: "tutu"
+            showEdit: false,
+            editID: "",
+            editName: "",
+            editCuisine: ""
         }
     }
 
@@ -49,7 +50,7 @@ class RestaurantsCatalog extends React.Component {
     }
 
     removeRestaurant(id,index){
-        let url = "http://localhost:8080/api/restaurants/" + id;
+        let url = "http://localhost:8080/api/restaurants/" + id.toString();
 
         console.log("id : " + id + " | index : " + index)
 
@@ -57,16 +58,35 @@ class RestaurantsCatalog extends React.Component {
             method: "DELETE",
         })
         .then((responseJSON) => {
+            //console.log("restaurant removed at index : " + index)
+            //console.log("Before : " + this.state.restaurants.length)
             this.state.restaurants.splice(index,1)
-            this.message = 'Ce restaurant a été supprimé'
-            this.showMessage = true
-            setTimeout(()=>{
-                this.showMessage = false
-            },3000)
+            //console.log("After : " + this.state.restaurants.length)
+            //window.location.reload();
         })
         .catch(function (err) {
             console.log(err);
         });
+    }
+
+    showEditFormRestaurant(id, name, cuisine) {
+        this.setState({
+            showEdit: true,
+            editID: id,
+            editName: name,
+            editCuisine: cuisine
+        })
+    }
+
+    showCreateFormRestaurant() {
+        this.state.showAdd = true;
+    }
+
+    hideForms() {
+        this.setState({
+            showAdd: false,
+            showEdit: false
+        })
     }
 
     showForm() {
@@ -79,23 +99,27 @@ class RestaurantsCatalog extends React.Component {
 
     render() {
         let list = this.state.restaurants.map((el,index) => {
-                return <Restaurant name={el.name} cuisine={el.cuisine} 
-                index={index} delete={this.removeRestaurant.bind(el._id, index)}/>
+                return <Restaurant
+                            name={el.name} 
+                            cuisine={el.cuisine}
+                            index={index} 
+                            edit={this.showEditFormRestaurant.bind(this, el._id, el.name, el.cuisine)}
+                            delete={this.removeRestaurant.bind(this, el._id, index)}/>
             }
         );
         
         return (
             <div className="Restaurant">
                 <h3>Liste des restaurants: </h3>
-                <button type="button" class="btn btn-dark mb-3" id="createButton" onClick="#">+</button><br/>
+                <button type="button" class="btn btn-dark mb-3" id="createButton" onClick={this.showCreateFormRestaurant.bind(this)}>+</button><br/>
                 <input
                     type="text"
                     placeholder = "Chercher par nom"
                     ref={(input) => {this.input = input}}
                 /><br/><br/>
                 <div id="form1">
-                    { this.state.showAdd ? <CustomForm type="Create"/> : null }
-                    { this.state.showAdd ? <CustomForm type="Update" name={this.state.updateName} cuisine={this.state.updateCuisine}/> : null }
+                    { this.state.showAdd ? <CustomForm type="Create" hide={this.hideForms.bind()}/> : null }
+                    { this.state.showEdit ? <CustomForm type="Edit"  hide={this.hideForms.bind()} name={this.state.editName} cuisine={this.state.editCuisine} editID={this.state.editID} /> : null }
                 </div><br/>
 
                 <table className="table table-bordered">

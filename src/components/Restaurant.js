@@ -8,7 +8,7 @@ import React, { Component } from 'react';
          <td>{props.name}</td>
          <td>{props.cuisine}</td>
          <td>
-            <button class="btn btn-dark">Edit</button>
+            <button class="btn btn-dark" onClick={props.edit}>Edit</button>
             <button class="btn btn-dark" onClick={props.delete}>Delete</button>
          </td>
          </tr>

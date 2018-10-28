@@ -1,13 +1,18 @@
 import React, {Component} from 'react'
 
 import Restaurant from './components/Restaurant';
+import CustomForm from './components/CustomForm';
 
 class RestaurantsCatalog extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            restaurants: []
+            restaurants: [],
+            showAdd: false,
+            showUpdate: false,
+            updateName: "titi",
+            updateCuisine: "tutu"
         }
     }
 
@@ -36,24 +41,23 @@ class RestaurantsCatalog extends React.Component {
                     restaurants: restaurants
                 });
 
-                console.log('Restaurants fetched successfully: ' + restaurants);
+                console.log('Restaurants fetched successfully');
             })
             .catch(err => {
                 console.log('Error getting the restaurants: ' + err);                
             });
     }
 
-    removeRestaurant(id, index) {
-        console.log("delete : " + index);
-        let url = "localhost:8080/api/restaurants/" + id;
- 
+    removeRestaurant(id,index){
+        let url = "http://localhost:8080/api/restaurants/" + id;
+
+        console.log("id : " + id + " | index : " + index)
+
         fetch(url, {
             method: "DELETE",
         })
-        .then(response =>
-                response.json().then(json  => {
-            this.restaurants.splice(index,1)
-            this.filteredrestaurants.splice(index,1)
+        .then((responseJSON) => {
+            this.state.restaurants.splice(index,1)
             this.message = 'Ce restaurant a été supprimé'
             this.showMessage = true
             setTimeout(()=>{
@@ -62,7 +66,15 @@ class RestaurantsCatalog extends React.Component {
         })
         .catch(function (err) {
             console.log(err);
-        }));
+        });
+    }
+
+    showForm() {
+
+    }
+
+    search() {
+
     }
 
     render() {
@@ -75,17 +87,28 @@ class RestaurantsCatalog extends React.Component {
         return (
             <div className="Restaurant">
                 <h3>Liste des restaurants: </h3>
+                <button type="button" class="btn btn-dark mb-3" id="createButton" onClick="#">+</button><br/>
                 <input
                     type="text"
+                    placeholder = "Chercher par nom"
                     ref={(input) => {this.input = input}}
-                />
-                <table>
-                    <tr>
-                        <th>Name</th>
-                        <th>Cuisine</th>
-                        <th>Actions</th>
-                    </tr>
-                    {list}
+                /><br/><br/>
+                <div id="form1">
+                    { this.state.showAdd ? <CustomForm type="Create"/> : null }
+                    { this.state.showAdd ? <CustomForm type="Update" name={this.state.updateName} cuisine={this.state.updateCuisine}/> : null }
+                </div><br/>
+
+                <table className="table table-bordered">
+                    <thead className="thead-dark">
+                        <tr>
+                            <th>Name</th>
+                            <th>Cuisine</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {list}
+                    </tbody>
                 </table>
             </div>
         );
